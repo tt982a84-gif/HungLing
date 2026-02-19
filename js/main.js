@@ -133,10 +133,19 @@ document.addEventListener('click', function (e) {
             return;
         }
 
-        // 官方帳號使用 https://line.me/R/ti/p/@ID
-        // 這是最標準的官方帳號加入好友連結
+        // on Desktop (Mac/Windows), use line:// protocol to force open the app
+        // on Mobile, https://line.me/R/ti/p/@ID usually works best, but line:// is also supported
+
+        const lineScheme = 'line://ti/p/' + LINE_ID;
         const webUrl = 'https://line.me/R/ti/p/' + encodeURIComponent(LINE_ID);
-        window.location.href = webUrl;
+
+        // 嘗試開啟 App
+        window.location.href = lineScheme;
+
+        // 設定一個緩衝時間，如果不支援 scheme 則跳轉網頁版
+        setTimeout(function () {
+            window.location.href = webUrl;
+        }, 1500);
     });
 })();
 
