@@ -33,7 +33,7 @@ body {
 
 .nav-products {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     align-items: center;
 }
 
@@ -45,11 +45,11 @@ body {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: #f8fafc;
-    padding: 5px 10px;
-    border-radius: 8px;
+    padding: 4px 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-weight: 600;
+    font-size: 0.9rem;
 }
 
 /* 每秒閃爍一次的邊框動畫（白色） */
