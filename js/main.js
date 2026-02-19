@@ -166,29 +166,7 @@ document.addEventListener('click', function (e) {
         console.log('analytics: local pageviews =', n);
     } catch (e) { /* ignore */ }
 
-    // contact form fallback inside contact-panel (if present)
-    const panel = document.getElementById('contact-panel');
-    if (panel) {
-        // inject a simple fallback form if not present
-        if (!document.getElementById('contact-form')) {
-            const form = document.createElement('form');
-            form.id = 'contact-form';
-            form.innerHTML = '\n                <label>姓名<br><input name="name" type="text" required></label><br>\n                <label>Email<br><input name="email" type="email" required></label><br>\n                <label>訊息<br><textarea name="message" rows="3" required></textarea></label><br>\n                <div style="display:flex;gap:8px;margin-top:6px;"><button type="submit" class="btn btn-primary">送出</button><button type="button" id="contact-cancel" class="btn">取消</button></div>\n            ';
-            panel.appendChild(form);
-            // handle submit -> open mailto fallback
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const fd = new FormData(form);
-                const name = fd.get('name') || '';
-                const email = fd.get('email') || '';
-                const message = fd.get('message') || '';
-                const subject = encodeURIComponent('網站聯絡：' + name);
-                const body = encodeURIComponent('From: ' + name + ' (' + email + ')\n\n' + message);
-                window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
-            });
-            document.getElementById('contact-cancel').addEventListener('click', function () { panel.parentElement.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); });
-        }
-    }
+
 })();
 
 // Plausible analytics consent handling
