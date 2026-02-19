@@ -232,6 +232,9 @@ body {
     object-fit: cover;
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(2, 6, 23, 0.12);
+    /* Zoom in to crop out watermarks */
+    transform: scale(1.15);
+    transform-origin: center center;
 }
 
 .carousel-item:nth-child(1) {
@@ -255,7 +258,10 @@ body {
 
     .carousel-item {
         width: 100%;
-        height: auto;
+        height: 220px;
+        object-fit: cover;
+        transform: scale(1.25);
+        object-position: center !important;
     }
 }
 
