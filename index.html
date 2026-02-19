@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泓玲電腦 - POS機與系統專家</title>
+    <meta name="description" content="泓玲電腦提供 POS、地磅、製造業 MRP、會計總帳等企業系統與整合服務。專業系統整合與在地化支援。">
+    <!-- Open Graph -->
+    <meta property="og:title" content="泓玲電腦 - POS機與系統專家">
+    <meta property="og:description" content="泓玲電腦提供 POS、地磅、製造業 MRP、會計總帳等企業系統與整合服務。">
+    <meta property="og:image" content="img/pos.png">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="/favicon.ico">
+    <!-- css/style.css -->
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo"><i class="fas fa-desktop"></i> 泓玲電腦</a>
+
+            <div class="nav-products" id="nav-products">
+                <div class="product-item">
+                    <button class="product-toggle">核心商務與財務管理</button>
+                    <div class="product-menu">
+                        <ul>
+                            <li data-desc="會計帳務、報表與稅務作業" data-icon="fa-file-invoice-dollar">會計總帳(繁體/簡體)</li>
+                            <li data-desc="進銷存、庫存管理" data-icon="fa-boxes">MIS 買賣業進銷存（可整合 022）</li>
+                            <li data-desc="發票與客戶資料管理" data-icon="fa-receipt">客戶發票資料管理系統</li>
+                            <li data-desc="支票套印與歷史查詢" data-icon="fa-money-check">支票套印及保留過往資料查印系統</li>
+                            <li data-desc="薪資計算與人事紀錄" data-icon="fa-users">人事薪資管理系統</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="product-item">
+                    <button class="product-toggle">零售與餐飲觸控系統</button>
+                    <div class="product-menu">
+                        <ul>
+                            <li>餐飲觸控結帳系統</li>
+                            <li>蔬果超市過磅觸控結帳系統</li>
+                            <li>蔬果 / 五金百貨過磅條碼觸控快速結帳系統</li>
+                            <li>商品批發業觸控結帳系統（蔬果 / 鮮雞鴨魚肉）</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="product-item">
+                    <button class="product-toggle">專業地磅與過磅整合</button>
+                    <div class="product-menu">
+                        <ul>
+                            <li>卡車一二次過磅地磅單資料管理系統 (結合影像)</li>
+                            <li>二維條碼過磅觸控出入庫管理系統 (RS232 通訊)</li>
+                            <li>自訂標籤格式結合過磅值列印標籤系統</li>
+                            <li>報廢輪胎過磅記錄系統</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="product-item">
+                    <button class="product-toggle">工業製造與自動化控制</button>
+                    <div class="product-menu">
+                        <ul>
+                            <li>MRP 製造業進銷存（可整合 022）</li>
+                            <li>MRP 製造業進銷存（可整合 022GB）（簡體字版）</li>
+                            <li>拉壓力破壞機試驗管理系統（機械自動控制）</li>
+                            <li>摩擦材料係數檢測系統（機械自動控制）</li>
+                            <li>四軸點膠塗佈機教導式觸控操作系統（機械自動控制）</li>
+                            <li>四軸加工機教導式觸控操作系統（機械自動控制）</li>
+                            <li>紙箱堆疊控制觸控作業系統</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navbar 聯絡按鈕（與右下 LINE 面板同樣功能） -->
+            <button id="nav-contact-open" class="nav-contact-btn">聯絡我們</button>
+            <a href="https://twincn.com/item.aspx?no=85956954#google_vignette" target="_blank"
+                class="nav-info-btn">公司核准<br>設立資料</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <!-- 標題已移除以節省垂直空間 -->
+
+            <!-- 三張並列圖片（pos.png、2.jpg、3.jpg），lazy loading 與簡易 srcset -->
+            <div class="hero-carousel" id="hero-carousel" role="region" aria-label="公司展示圖片">
+                <img src="img/pos.png" srcset="img/pos.png 800w, img/pos.png 400w" sizes="(max-width:480px) 100vw, 33vw"
+                    alt="圖片 1" class="carousel-item" loading="lazy">
+                <img src="img/2.jpg" srcset="img/2.jpg 800w, img/2.jpg 400w" sizes="(max-width:480px) 100vw, 33vw"
+                    alt="圖片 2" class="carousel-item" loading="lazy">
+                <img src="img/3.jpg" srcset="img/3.jpg 800w, img/3.jpg 400w" sizes="(max-width:480px) 100vw, 33vw"
+                    alt="圖片 3" class="carousel-item" loading="lazy">
+            </div>
+
+            <div class="demo-box">
+                <!-- 介紹服務功能已移除 -->
+
+                <hr>
+
+                <div class="systems-list">
+                    <h3>公司系統一覽</h3>
+
+                    <div class="systems-search">
+                        <input id="systems-search" type="search" placeholder="搜尋系統或關鍵字...">
+                        <button id="clear-search" class="btn">清除</button>
+                    </div>
+
+                    <div class="system-group">
+                        <button class="group-toggle" aria-expanded="true">一、 核心商務與財務管理 (Business &amp; Finance)</button>
+                        <div class="group-content">
+                            <p class="group-note">這類系統專注於企業的帳務與基本買賣流程。</p>
+                            <ul>
+                                <li>會計總帳(繁體/簡體)</li>
+                                <li>MIS 買賣業進銷存（可整合 022）</li>
+                                <li>客戶發票資料管理系統</li>
+                                <li>支票套印及保留過往資料查印系統</li>
+                                <li>人事薪資管理系統</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="system-group">
+                        <button class="group-toggle" aria-expanded="true">二、 零售與餐飲觸控系統 (POS &amp; Retail)</button>
+                        <div class="group-content">
+                            <p class="group-note">針對門市、超市及餐廳設計的直覺式結帳方案。</p>
+                            <ul>
+                                <li data-desc="餐廳點餐與結帳" data-icon="fa-utensils">餐飲觸控結帳系統</li>
+                                <li data-desc="過磅結帳，適用蔬果" data-icon="fa-weight-scale">蔬果超市過磅觸控結帳系統</li>
+                                <li data-desc="過磅+條碼快速結帳" data-icon="fa-barcode">蔬果 / 五金百貨超市過磅條碼觸控快速結帳系統</li>
+                                <li data-desc="批發/市場專用收銀" data-icon="fa-store">商品批發業觸控結帳系統（蔬果 / 鮮雞鴨魚肉）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="system-group">
+                        <button class="group-toggle" aria-expanded="true">三、 專業地磅與過磅整合 (Weighting &amp; Scales)</button>
+                        <div class="group-content">
+                            <p class="group-note">將硬體過磅數據與軟體管理系統結合。</p>
+                            <ul>
+                                <li data-desc="卡車過磅與影像記錄" data-icon="fa-truck">卡車一二次過磅地磅單資料管理系統 (結合影像)</li>
+                                <li data-desc="QR/條碼入出庫整合" data-icon="fa-qrcode">二維條碼過磅觸控出入庫管理系統 (RS232 通訊)</li>
+                                <li data-desc="標籤列印與格式自訂" data-icon="fa-print">自訂標籤格式結合過磅值列印標籤系統</li>
+                                <li data-desc="報廢輪胎過磅紀錄" data-icon="fa-tire">報廢輪胎過磅記錄系統</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="system-group">
+                        <button class="group-toggle" aria-expanded="true">四、 工業製造與自動化控制 (Manufacturing &amp;
+                            Automation)</button>
+                        <div class="group-content">
+                            <p class="group-note">針對工廠端設計的進銷存及精密機械控制系統。</p>
+                            <ul>
+                                <li data-desc="製造業物料與生產排程" data-icon="fa-industry">MRP 製造業進銷存（可整合 022）</li>
+                                <li data-desc="簡體字製造系統" data-icon="fa-industry">MRP 製造業進銷存（可整合 022GB）（簡體字版）</li>
+                                <li data-desc="試驗機資料記錄與控制" data-icon="fa-clipboard-check">拉壓力破壞機試驗管理系統（機械自動控制）</li>
+                                <li data-desc="材料摩擦係數測試" data-icon="fa-sliders-h">摩擦材料係數檢測系統（機械自動控制）</li>
+                                <li data-desc="點膠塗佈教導式系統" data-icon="fa-microchip">四軸點膠塗佈機教導式觸控操作系統（機械自動控制）</li>
+                                <li data-desc="四軸加工機教導控制" data-icon="fa-microchip">四軸加工機教導式觸控操作系統（機械自動控制）</li>
+                                <li data-desc="紙箱堆疊與控制面板" data-icon="fa-box">紙箱堆疊控制觸控作業系統</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 簡易預算計算功能已移除 -->
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 泓玲電腦
+            負責人 張雅玲
+            <br>公司地址
+            <br>臺南市永康區安康里永大一路62之7號1樓
+        </p>
+    </footer>
+
+    <!-- 聯絡我們浮動按鈕 -->
+    <div class="contact-fab" id="contact-fab" aria-hidden="false">
+        <button id="contact-open" class="fab-btn" aria-label="聯絡我們">
+            <i class="fab fa-line"></i>
+        </button>
+        <div class="contact-panel" id="contact-panel" aria-hidden="true">
+            <button id="contact-close" class="panel-close" aria-label="關閉">✕</button>
+            <h4>聯絡我們</h4>
+            <p>透過 LINE 與我們對話</p>
+            <div class="contact-actions">
+                <button id="open-line" class="btn btn-primary">用 LINE 聊聊</button>
+            </div>
+            <p class="note-small">[請登入會員並加入好友，收到訊息後將儘速回覆]</p>
+        </div>
+    </div>
+
+    <script src="js/main.js" defer></script>
+
+    <!-- Plausible consent banner (hidden by default) -->
+    <div id="analytics-consent"
+        style="position:fixed;left:12px;right:12px;bottom:12px;z-index:200;display:none;background:#fff;padding:12px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div>
+                <strong>允許匿名網站分析？</strong>
+                <div style="color:#64748b;font-size:0.95rem;">我們使用隱私友善的分析以改善使用體驗，不會蒐集個人資料。</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <button id="analytics-decline" class="btn">拒絕</button>
+                <button id="analytics-accept" class="btn btn-primary">允許</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
