@@ -558,6 +558,12 @@ body {
     .systems-list li {
         flex: 1 1 100%;
     }
+
+    /* 在手機版讓標題與按鈕堆疊 */
+    .systems-list>div {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
 }
 
 /* Contact FAB */
