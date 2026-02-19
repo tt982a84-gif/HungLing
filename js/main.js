@@ -104,7 +104,7 @@ document.addEventListener('click', function (e) {
     const panel = document.getElementById('contact-panel');
     const openLineBtn = document.getElementById('open-line');
 
-    const LINE_ID = '0937270584'; // 已由使用者提供的 LINE ID
+    const LINE_ID = '@747uykhu'; // 已由使用者提供的 LINE ID
 
     function togglePanel(show) {
         if (!fab) return;
@@ -133,9 +133,9 @@ document.addEventListener('click', function (e) {
             return;
         }
 
-        // 直接使用 https://line.me/ti/p/~ID 連結 (需加上 ~ 才是搜尋 ID)
-        // 這在 iOS/Android 會自動喚起 LINE App，PC 則會開啟網頁版 QR Code
-        const webUrl = 'https://line.me/ti/p/~' + encodeURIComponent(LINE_ID);
+        // 官方帳號使用 https://line.me/R/ti/p/@ID
+        // 這是最標準的官方帳號加入好友連結
+        const webUrl = 'https://line.me/R/ti/p/' + encodeURIComponent(LINE_ID);
         window.location.href = webUrl;
     });
 })();
