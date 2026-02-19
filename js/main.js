@@ -133,20 +133,10 @@ document.addEventListener('click', function (e) {
             return;
         }
 
-        // 嘗試啟動 line:// 協定（手機優先）再 fallback 到 https
-        const lineScheme = 'line://ti/p/' + encodeURIComponent(LINE_ID);
-        const webUrl = 'https://line.me/R/ti/p/' + encodeURIComponent(LINE_ID);
-
-        // 嘗試用 location 進行跳轉，並在 800ms 後 fallback
-        let opened = false;
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        try { iframe.contentWindow.location.href = lineScheme; opened = true; } catch (err) { /* ignore */ }
-        setTimeout(function () {
-            document.body.removeChild(iframe);
-            if (!opened) window.open(webUrl, '_blank');
-        }, 800);
+        // 直接使用 https://line.me/ti/p/ 連結
+        // 這在 iOS/Android 會自動喚起 LINE App，PC 則會開啟網頁版 QR Code
+        const webUrl = 'https://line.me/ti/p/' + encodeURIComponent(LINE_ID);
+        window.location.href = webUrl;
     });
 })();
 
