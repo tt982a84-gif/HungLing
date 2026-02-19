@@ -133,9 +133,9 @@ document.addEventListener('click', function (e) {
             return;
         }
 
-        // 直接使用 https://line.me/ti/p/ 連結
+        // 直接使用 https://line.me/ti/p/~ID 連結 (需加上 ~ 才是搜尋 ID)
         // 這在 iOS/Android 會自動喚起 LINE App，PC 則會開啟網頁版 QR Code
-        const webUrl = 'https://line.me/ti/p/' + encodeURIComponent(LINE_ID);
+        const webUrl = 'https://line.me/ti/p/~' + encodeURIComponent(LINE_ID);
         window.location.href = webUrl;
     });
 })();
