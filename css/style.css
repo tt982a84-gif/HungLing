@@ -45,11 +45,11 @@ body {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: #f8fafc;
-    padding: 8px 16px;
+    padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 /* 每秒閃爍一次的邊框動畫（白色） */
