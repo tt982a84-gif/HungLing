@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>張媽媽滷味 - 觸控收銀系統 (Web Demo)</title>
+    <!-- 引入 Font Awesome 用於圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/pos-app.css">
+</head>
+
+<body>
+    <div class="pos-container">
+        <!-- 左側：購物車與結帳區 -->
+        <div class="left-panel">
+            <div class="cart-header">
+                <h2>購物車清單</h2>
+            </div>
+
+            <div class="cart-body">
+                <table class="cart-table" id="cart-table">
+                    <thead>
+                        <tr>
+                            <th>品名</th>
+                            <th>數量</th>
+                            <th>小計</th>
+                            <th>移除</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-tbody">
+                        <!-- 購物車項目透過 JS 產生 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-footer">
+                <div class="total-row">
+                    <span>總計：</span>
+                    <span id="total-price" class="total-price">$ 0</span>
+                </div>
+                <div class="payment-row">
+                    <span id="lbl-received">實收: $ 0</span>
+                    <span id="lbl-change">找零: $ 0</span>
+                </div>
+                <!-- 數字鍵盤模式下的輸入顯示 (對應原 Python 的 info_label) -->
+                <div class="input-display" id="info-label">張媽媽滷味</div>
+
+                <button id="btn-checkout" class="btn btn-checkout" disabled>結帳 (Checkout)</button>
+            </div>
+        </div>
+
+        <!-- 右側：商品展示與功能區 -->
+        <div class="right-panel">
+            <!-- 頂部功能按鈕 -->
+            <div class="function-bar">
+                <div class="pagination">
+                    <button class="btn btn-nav" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
+                    <span id="page-label" class="page-label">1 / 1</span>
+                    <button class="btn btn-nav" id="btn-next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-manage" id="btn-manage-open"><i class="fas fa-cog"></i> 品項管理</button>
+                    <a href="index.html" class="btn btn-home"><i class="fas fa-home"></i> 回首頁</a>
+                </div>
+            </div>
+
+            <!-- 數字鍵盤區 (因為要在商品點擊前輸入數量，或者結帳時輸入實收金額) -->
+            <div class="numpad-container">
+                <div class="numpad">
+                    <button class="num-btn" data-val="7">7</button>
+                    <button class="num-btn" data-val="8">8</button>
+                    <button class="num-btn" data-val="9">9</button>
+                    <button class="num-btn" data-val="4">4</button>
+                    <button class="num-btn" data-val="5">5</button>
+                    <button class="num-btn" data-val="6">6</button>
+                    <button class="num-btn" data-val="1">1</button>
+                    <button class="num-btn" data-val="2">2</button>
+                    <button class="num-btn" data-val="3">3</button>
+                    <button class="num-btn" data-val="0">0</button>
+                    <button class="num-btn" data-val="00">00</button>
+                    <button class="num-btn btn-clear" id="btn-clear">清除</button>
+                </div>
+                <div class="numpad-info">
+                    <p><i class="fas fa-info-circle"></i> 提示：</p>
+                    <ul>
+                        <li>點擊數字輸入「數量」👉 再點選下方「商品」即可加入購物車</li>
+                        <li>加入後，點擊數字輸入「實收金額」👉 滿額後可點擊「結帳」</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 商品方塊區 -->
+            <div class="products-grid" id="products-grid">
+                <!-- 商品按鈕透過 JS 產生 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal：結帳完成 / 找零確認 -->
+    <div id="modal-checkout" class="modal">
+        <div class="modal-content modal-center">
+            <h2 class="modal-title">結帳完成</h2>
+            <div class="checkout-details">
+                <p id="checkout-total">應收： $ 0</p>
+                <p id="checkout-received">實收： $ 0</p>
+            </div>
+            <h3 class="change-title">找零金額</h3>
+            <div class="change-amount" id="checkout-change">$ 0</div>
+            <button class="btn btn-confirm" id="btn-checkout-confirm">確認完成 (Enter)</button>
+        </div>
+    </div>
+
+    <!-- Modal：品項管理 -->
+    <div id="modal-manage" class="modal">
+        <div class="modal-content manage-content">
+            <div class="manage-header">
+                <h2>品項管理</h2>
+                <button class="btn-close" id="btn-manage-close"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="manage-body">
+                <!-- 管理區：左側現有商品 -->
+                <div class="manage-left">
+                    <h3>現有商品清單 (選取後點刪除)</h3>
+                    <div class="table-wrapper">
+                        <table class="manage-table" id="manage-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>品名</th>
+                                    <th>價格</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manage-tbody">
+                                <!-- 由 JS 產生 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 管理區：右側新增/刪除 -->
+                <div class="manage-right">
+                    <h3 class="settings-title">產品設定</h3>
+
+                    <div class="form-group">
+                        <label for="new-product-name">新增品名:</label>
+                        <input type="text" id="new-product-name" placeholder="請輸入品名">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new-product-price">新增單價:</label>
+                        <input type="number" id="new-product-price" placeholder="請輸入金額" min="0">
+                    </div>
+
+                    <button class="btn btn-add-product" id="btn-add-product">新增並儲存</button>
+
+                    <div class="divider"></div>
+
+                    <p class="delete-hint">請在左側選擇商品，點擊下方刪除</p>
+                    <button class="btn btn-delete-product" id="btn-delete-product">刪除選中商品</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/pos-data.js"></script>
+    <script src="js/pos-app.js"></script>
+</body>
+
+</html>
