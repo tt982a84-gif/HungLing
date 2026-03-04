@@ -1,0 +1,27 @@
+{
+  "name": "web_project",
+  "version": "1.0.0",
+  "description": "a professional computer company",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tt982a84-gif/HungLing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tt982a84-gif/HungLing/issues"
+  },
+  "homepage": "https://github.com/tt982a84-gif/HungLing#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0",
+    "@capacitor/ios": "^8.1.0"
+  }
+}

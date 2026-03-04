@@ -1,5 +1,4 @@
-
-.DS_Store
-.vscode/
 node_modules/
-*.log
+.DS_Store
+ios/App/public
+android/app/src/main/assets/public

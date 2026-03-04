@@ -1,0 +1,258 @@
+// 1. 服務介紹功能已移除
+
+// 預算計算功能已移除
+
+// 3. 系統群組折疊與搜尋過濾
+document.addEventListener('DOMContentLoaded', function () {
+    const toggles = document.querySelectorAll('.group-toggle');
+    toggles.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', String(!expanded));
+            const content = btn.nextElementSibling;
+            if (content) content.classList.toggle('collapsed', expanded);
+        });
+    });
+
+    const searchInput = document.getElementById('systems-search');
+    const clearBtn = document.getElementById('clear-search');
+
+    function filterSystems() {
+        const q = (searchInput.value || '').trim().toLowerCase();
+        const groups = document.querySelectorAll('.system-group');
+        groups.forEach(group => {
+            const items = group.querySelectorAll('ul li');
+            let anyVisible = false;
+            items.forEach(li => {
+                const txt = li.textContent.trim().toLowerCase();
+                const match = q === '' || txt.indexOf(q) !== -1;
+                li.classList.toggle('hidden', !match);
+                if (match) anyVisible = true;
+            });
+            group.hidden = !anyVisible;
+            // 展開有結果的群組
+            const toggle = group.querySelector('.group-toggle');
+            const content = group.querySelector('.group-content');
+            if (anyVisible) {
+                if (toggle) toggle.setAttribute('aria-expanded', 'true');
+                if (content) content.classList.remove('collapsed');
+            }
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterSystems);
+    if (clearBtn) clearBtn.addEventListener('click', function () { if (searchInput) { searchInput.value = ''; filterSystems(); searchInput.focus(); } });
+
+    // Accessibility: allow Enter/Space to toggle group-toggle buttons
+    toggles.forEach(btn => {
+        btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                btn.click();
+            }
+        });
+    });
+    // enhance product-toggle keyboard support
+    const productToggles = document.querySelectorAll('.product-toggle');
+    productToggles.forEach(pt => {
+        pt.setAttribute('tabindex', '0');
+        pt.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pt.click(); } });
+    });
+
+    // decorate list items with icon and small description (generic)
+    const listItems = document.querySelectorAll('.system-group .group-content ul li');
+    listItems.forEach(li => {
+        li.classList.add('category-card'); // 加入高級感卡片樣式
+        // avoid double-inject
+        if (li.querySelector('.card-icon')) return;
+        const icon = document.createElement('i');
+        const iconClass = li.getAttribute('data-icon') || 'fa-check-circle';
+        icon.className = `fas ${iconClass} card-icon`;
+        icon.setAttribute('aria-hidden', 'true');
+        const body = document.createElement('div'); body.className = 'card-body';
+        const name = document.createElement('span'); name.className = 'sys-name'; name.textContent = li.textContent.trim();
+        const desc = document.createElement('small'); desc.className = 'sys-desc'; desc.textContent = '系統功能/用途說明';
+        body.appendChild(name); body.appendChild(desc);
+        li.textContent = ''; // clear existing
+        li.appendChild(icon); li.appendChild(body);
+    });
+    // 滾動淡入動畫
+    const revealElements = document.querySelectorAll('.reveal');
+    if (revealElements.length > 0 && window.IntersectionObserver) {
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const revealOnScroll = new IntersectionObserver(function (entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+        revealElements.forEach(el => {
+            revealOnScroll.observe(el);
+        });
+    } else {
+        // Fallback for no IntersectionObserver support
+        revealElements.forEach(el => el.classList.add('active'));
+    }
+});
+
+// 4. Navbar 產品資訊下拉行為（單一開啟，點擊外側關閉）
+document.addEventListener('click', function (e) {
+    const isToggle = e.target.closest('.product-toggle');
+    const allItems = document.querySelectorAll('.nav-products .product-item');
+
+    if (isToggle) {
+        const item = isToggle.closest('.product-item');
+        const open = item.classList.contains('open');
+        allItems.forEach(i => i.classList.remove('open'));
+        if (!open) item.classList.add('open');
+        return;
+    }
+
+    // 點擊外部則關閉所有
+    if (!e.target.closest('.nav-products')) {
+        allItems.forEach(i => i.classList.remove('open'));
+    }
+});
+
+// 5. 聯絡我們 FAB 與 LINE 深層連動
+(function () {
+    const fab = document.getElementById('contact-fab');
+    const openBtn = document.getElementById('contact-open');
+    const closeBtn = document.getElementById('contact-close');
+    const panel = document.getElementById('contact-panel');
+    const openLineBtn = document.getElementById('open-line');
+
+    const LINE_ID = '@747uykhu'; // 已由使用者提供的 LINE ID
+
+    function togglePanel(show) {
+        if (!fab) return;
+        if (show) {
+            fab.classList.add('open');
+            panel.setAttribute('aria-hidden', 'false');
+        } else {
+            fab.classList.remove('open');
+            panel.setAttribute('aria-hidden', 'true');
+        }
+    }
+
+    if (openBtn) openBtn.addEventListener('click', function (e) { e.stopPropagation(); togglePanel(true); });
+    // Navbar 右側聯絡按鈕也開啟同一個面板
+    const navContact = document.getElementById('nav-contact-open');
+    if (navContact) navContact.addEventListener('click', function (e) { e.stopPropagation(); togglePanel(true); });
+    if (closeBtn) closeBtn.addEventListener('click', function (e) { e.stopPropagation(); togglePanel(false); });
+    // 點擊面板內部不關閉
+    if (panel) panel.addEventListener('click', function (e) { e.stopPropagation(); });
+    // 點擊外部關閉
+    document.addEventListener('click', function () { togglePanel(false); });
+
+    if (openLineBtn) openLineBtn.addEventListener('click', function () {
+        if (!LINE_ID || LINE_ID === 'YOUR_LINE_ID') {
+            alert('請先將 js/main.js 中的 LINE_ID 改成你的 LINE 官方帳號 ID，或聯絡管理員設定。');
+            return;
+        }
+
+        // on Desktop (Mac/Windows), use line:// protocol to force open the app
+        // on Mobile, https://line.me/R/ti/p/@ID usually works best, but line:// is also supported
+
+        const lineScheme = 'line://ti/p/' + LINE_ID;
+        const webUrl = 'https://line.me/R/ti/p/' + encodeURIComponent(LINE_ID);
+
+        // 嘗試開啟 App
+        window.location.href = lineScheme;
+
+        // 設定一個緩衝時間，如果不支援 scheme 則跳轉網頁版
+        setTimeout(function () {
+            window.location.href = webUrl;
+        }, 1500);
+    });
+})();
+
+// 6. Hero 輪播：三張圖片，每張顯示約 1500ms（1.5s），帶淡入淡出
+(function () {
+    // Hero 已改為三張並列圖片，關閉舊的單張自動輪播邏輯。
+    const carousel = document.getElementById('hero-carousel');
+    if (!carousel) return;
+    console.log('carousel: showing 3 images side-by-side (autoplay disabled)');
+})();
+// Contact form fallback handling and simple privacy-friendly analytics
+(function () {
+    // simple analytics: local pageview counter
+    try {
+        const key = '__pl_pageviews__';
+        const n = parseInt(localStorage.getItem(key) || '0', 10) + 1;
+        localStorage.setItem(key, String(n));
+        console.log('analytics: local pageviews =', n);
+    } catch (e) { /* ignore */ }
+
+
+})();
+
+// Plausible analytics consent handling
+(function () {
+    const banner = document.getElementById('analytics-consent');
+    const accept = document.getElementById('analytics-accept');
+    const decline = document.getElementById('analytics-decline');
+    if (!banner || !accept || !decline) return;
+    const key = 'pl_consent';
+    const choice = localStorage.getItem(key);
+    if (!choice) banner.style.display = 'block';
+    function loadPlausible() {
+        if (window.plausible) return;
+        const s = document.createElement('script');
+        s.src = 'https://plausible.io/js/plausible.js';
+        s.defer = true;
+        s.setAttribute('data-domain', location.hostname);
+        document.head.appendChild(s);
+    }
+    accept.addEventListener('click', function () { localStorage.setItem(key, 'yes'); banner.style.display = 'none'; loadPlausible(); });
+    decline.addEventListener('click', function () { localStorage.setItem(key, 'no'); banner.style.display = 'none'; });
+    if (choice === 'yes') loadPlausible();
+})();
+// 7. Website Protection Measures
+(function () {
+    // Disable right-click
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+    });
+
+    // Disable copy, cut, paste
+    document.addEventListener('copy', function (e) { e.preventDefault(); });
+    document.addEventListener('cut', function (e) { e.preventDefault(); });
+    document.addEventListener('paste', function (e) { e.preventDefault(); });
+
+    // Disable drag
+    document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+    // Disable developer tools shortcuts
+    document.addEventListener('keydown', function (e) {
+        // F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+Shift+I (Mac: Meta+Option+I), Ctrl+Shift+J (Mac: Meta+Option+J), Ctrl+U (View Source)
+        if ((e.ctrlKey || e.metaKey) && (e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))) {
+            e.preventDefault();
+            return false;
+        }
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U')) {
+            e.preventDefault();
+            return false;
+        }
+        // Ctrl+S, Ctrl+P (Save, Print) - optional but requested "entire site protection"
+        if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Disable selection (JS backup for CSS)
+    document.addEventListener('selectstart', function (e) {
+        e.preventDefault();
+    });
+})();

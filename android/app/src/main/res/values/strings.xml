@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">泓玲電腦</string>
+    <string name="title_activity_main">泓玲電腦</string>
+    <string name="package_name">com.hungling.app</string>
+    <string name="custom_url_scheme">com.hungling.app</string>
+</resources>
