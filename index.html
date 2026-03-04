@@ -426,31 +426,36 @@
     </footer>
 
     <!-- LINE 懸浮聯絡按鈕 (Floating Action Button & QR Panel) -->
-    <div class="fixed bottom-6 right-6 z-[100] group flex flex-col items-end">
-        <!-- 展開的 QR Code 與聯絡面板 (懸停時顯示) -->
-        <div
-            class="glass-panel mb-4 p-6 rounded-2xl w-auto opacity-0 pointer-events-none translate-y-4 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-400 transform origin-bottom border border-[#00B900]/30 shadow-[0_0_30px_rgba(0,185,0,0.15)] flex flex-col items-center cursor-default">
-            <h4 class="font-bold text-white mb-2 flex items-center gap-2 whitespace-nowrap">
-                <iconify-icon icon="simple-icons:line" class="text-[#00B900]"></iconify-icon> 泓玲 LINE 客服
-            </h4>
-            <p class="text-xs text-gray-400 mb-4 text-center whitespace-nowrap">掃描 QR Code 或點擊下方按鈕加入</p>
+    <div class="fixed bottom-6 right-6 z-[100]">
+        <div class="relative group">
+            <!-- 展開的 QR Code 與聯絡面板 (懸停時顯示) -->
+            <div
+                class="absolute bottom-[calc(100%+16px)] right-0 glass-panel p-6 rounded-2xl w-max opacity-0 pointer-events-none translate-y-4 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-400 transform origin-bottom border border-[#00B900]/30 shadow-[0_0_30px_rgba(0,185,0,0.15)] flex flex-col items-center cursor-default">
+                <!-- 隱形橋樑，防止游標離開按鈕時中斷 Hover -->
+                <div class="absolute -bottom-6 right-0 w-full h-10 bg-transparent"></div>
 
-            <div class="bg-white p-2 rounded-xl mb-4">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://line.me/R/ti/p/%40747uykhu&color=050507&bgcolor=ffffff"
-                    alt="LINE QR Code" class="w-28 h-28 object-contain">
+                <h4 class="font-bold text-white mb-2 flex items-center gap-2 whitespace-nowrap">
+                    <iconify-icon icon="simple-icons:line" class="text-[#00B900]"></iconify-icon> 泓玲 LINE 客服
+                </h4>
+                <p class="text-xs text-gray-400 mb-4 text-center whitespace-nowrap">掃描 QR Code 或點擊下方按鈕加入</p>
+
+                <div class="bg-white p-2 rounded-xl mb-4 relative z-10">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://line.me/R/ti/p/%40747uykhu&color=050507&bgcolor=ffffff"
+                        alt="LINE QR Code" class="w-28 h-28 object-contain">
+                </div>
+
+                <a href="https://line.me/R/ti/p/%40747uykhu" target="_blank" id="open-line-hover"
+                    class="relative z-10 w-full text-center py-2.5 rounded-lg bg-[#00B900] text-white font-bold text-sm tracking-widest hover:bg-[#009b00] transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer">
+                    手機點此加入
+                </a>
             </div>
 
-            <a href="https://line.me/R/ti/p/%40747uykhu" target="_blank" id="open-line-hover"
-                class="w-full text-center py-2.5 rounded-lg bg-[#00B900] text-white font-bold text-sm tracking-widest hover:bg-[#009b00] transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer">
-                手機點此加入
+            <!-- 觸發按鈕 本體 -->
+            <a id="open-line-hover-icon"
+                class="relative z-10 w-14 h-14 rounded-full bg-[#00B900] text-white flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(0,185,0,0.4)] hover:scale-110 hover:shadow-[0_0_30px_rgba(0,185,0,0.6)] transition-all duration-300 magnetic hover-target cursor-pointer">
+                <iconify-icon icon="simple-icons:line"></iconify-icon>
             </a>
         </div>
-
-        <!-- 觸發按鈕 本體 -->
-        <a id="open-line-hover-icon"
-            class="w-14 h-14 rounded-full bg-[#00B900] text-white flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(0,185,0,0.4)] hover:scale-110 hover:shadow-[0_0_30px_rgba(0,185,0,0.6)] transition-all duration-300 magnetic hover-target cursor-pointer">
-            <iconify-icon icon="simple-icons:line"></iconify-icon>
-        </a>
     </div>
 
     <!-- 聯絡我們浮動按鈕 (保留原本 main.js 內部引用所需之元素避免報錯) -->
