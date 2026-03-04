@@ -567,7 +567,7 @@
                 let dy = mouseY - cursorY;
                 cursorX += dx * 0.15; // 調整 0.15 改變跟隨速度的黏滯感
                 cursorY += dy * 0.15;
-                cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+                cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
                 requestAnimationFrame(animateCursor);
             }
             animateCursor();
