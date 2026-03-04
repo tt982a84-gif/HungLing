@@ -84,8 +84,25 @@
         }
 
         /* 3. 自訂滑鼠游標 (Mix-blend-mode: difference) */
-        body {
-            cursor: none;
+        @media (pointer: fine) {
+
+            body,
+            a,
+            button,
+            input,
+            textarea,
+            select,
+            .cursor-pointer,
+            .hover-target,
+            [role="button"] {
+                cursor: none !important;
+            }
+        }
+
+        @media (pointer: coarse) {
+            .custom-cursor {
+                display: none !important;
+            }
         }
 
         .custom-cursor {
@@ -533,33 +550,40 @@
         // 2. 自訂滑鼠游標 (Mix-blend-mode: difference)
         const cursor = document.getElementById('cursor');
         const hoverTargets = document.querySelectorAll('.hover-target');
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let cursorX = mouseX;
-        let cursorY = mouseY;
 
-        // 監聽滑鼠移動
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+        // 檢查是否為觸控螢幕 (手機/平板)
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
-        // 平滑跟隨動畫 loop
-        function animateCursor() {
-            let dx = mouseX - cursorX;
-            let dy = mouseY - cursorY;
-            cursorX += dx * 0.15; // 調整 0.15 改變跟隨速度的黏滯感
-            cursorY += dy * 0.15;
-            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-            requestAnimationFrame(animateCursor);
+        if (!isTouchDevice && cursor) {
+            // 將初始座標移出畫面，避免一開始置中顯示白點
+            let mouseX = -100;
+            let mouseY = -100;
+            let cursorX = -100;
+            let cursorY = -100;
+
+            // 監聽滑鼠移動
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            // 平滑跟隨動畫 loop
+            function animateCursor() {
+                let dx = mouseX - cursorX;
+                let dy = mouseY - cursorY;
+                cursorX += dx * 0.15; // 調整 0.15 改變跟隨速度的黏滯感
+                cursorY += dy * 0.15;
+                cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover 放大狀態
+            hoverTargets.forEach(target => {
+                target.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                target.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
         }
-        animateCursor();
-
-        // Hover 放大狀態
-        hoverTargets.forEach(target => {
-            target.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            target.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-        });
 
         // 3. 按鈕磁吸效果 (Magnetic Pull)
         const magneticElements = document.querySelectorAll('.magnetic');
