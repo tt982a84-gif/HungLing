@@ -86,15 +86,9 @@
         /* 3. 自訂滑鼠游標 (Mix-blend-mode: difference) */
         @media (pointer: fine) {
 
-            body,
-            a,
-            button,
-            input,
-            textarea,
-            select,
-            .cursor-pointer,
-            .hover-target,
-            [role="button"] {
+            *,
+            *::before,
+            *::after {
                 cursor: none !important;
             }
         }
