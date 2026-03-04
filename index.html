@@ -1,232 +1,593 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW"
+    class="bg-[#050507] text-gray-100 antialiased overflow-x-hidden selection:bg-purple-600 selection:text-white">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>泓玲電腦 - POS機與系統專家</title>
-    <meta name="description" content="泓玲電腦提供 POS、地磅、製造業 MRP、會計總帳等企業系統與整合服務。專業系統整合與在地化支援。">
-    <!-- Open Graph -->
-    <meta property="og:title" content="泓玲電腦 - POS機與系統專家">
-    <meta property="og:description" content="泓玲電腦提供 POS、地磅、製造業 MRP、會計總帳等企業系統與整合服務。">
-    <meta property="og:image" content="img/pos.png">
-    <meta property="og:type" content="website">
-    <link rel="icon" href="/favicon.ico">
-    <!-- css/style.css -->
+    <title>泓玲電腦 | Next-Gen POS & Automation</title>
 
-    <link rel="stylesheet" href="css/style.css?v=1.0">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Space Grotesk for Futuristic Headings, Inter for legible body -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700;900&display=swap"
+        rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                        display: ['Space Grotesk', 'Noto Sans TC', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#050507',
+                        neon: {
+                            purple: '#8b5cf6',
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <!-- GSAP Core & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* 1. 全域高品質噪點紋理 (Global Grain) */
+        .noise-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.04;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* 2. 垂直容器參考線 (Grid Lines) */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1440px;
+            height: 100vh;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 0;
+            padding: 0 5vw;
+        }
+
+        .grid-line {
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.03) 10%, rgba(255, 255, 255, 0.03) 90%, transparent);
+        }
+
+        /* 3. 自訂滑鼠游標 (Mix-blend-mode: difference) */
+        body {
+            cursor: none;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            /* 核心互動效果 */
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s;
+            will-change: transform, width, height;
+        }
+
+        .custom-cursor.hover {
+            width: 80px;
+            height: 80px;
+            background-color: #ffffff;
+        }
+
+        /* 4. 1px 邊框光束 (1px Border Glow) */
+        .glow-border {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(139, 92, 246, 0.2) 100%);
+            padding: 1px;
+            /* 1px 邊框厚度 */
+            border-radius: 1.5rem;
+            /* 24px */
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .glow-border::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .glow-border:hover::before {
+            opacity: 1;
+        }
+
+        .glow-border-inner {
+            background-color: #050507;
+            border-radius: calc(1.5rem - 1px);
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 文字逐字浮現動畫基礎設定 */
+        .split-char {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: bottom;
+        }
+
+        .split-char span {
+            display: inline-block;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        /* 磁吸按鈕隱藏原生的 Outline */
+        .magnetic {
+            outline: none;
+        }
+
+        /* 隱藏原生捲軸 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Ambient Glow */
+        .ambient-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Glass effect for LINE panel */
+        .glass-panel {
+            background: rgba(5, 5, 7, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
 </head>
 
-<body>
+<body class="relative">
 
-    <nav class="navbar">
-        <div class="container">
-            <a href="#" class="logo"><i class="fas fa-desktop"></i> 泓玲電腦</a>
+    <!-- UI 裝飾與光影層 -->
+    <div class="noise-bg"></div>
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="grid-lines">
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+    </div>
+    <div class="ambient-glow w-[600px] h-[600px] bg-neon-purple top-[-10%] left-[-10%]"></div>
+    <div class="ambient-glow w-[800px] h-[800px] bg-neon-blue bottom-[20%] right-[-20%]"></div>
 
-            <div class="nav-products" id="nav-products">
-                <div class="product-item">
-                    <button class="product-toggle">核心商務與財務管理</button>
-                    <div class="product-menu">
-                        <ul>
-                            <li data-desc="會計帳務、報表與稅務作業" data-icon="fa-file-invoice-dollar">會計總帳(繁體/簡體)</li>
-                            <li data-desc="進銷存、庫存管理" data-icon="fa-boxes">MIS 買賣業進銷存（可整合 022）</li>
-                            <li data-desc="發票與客戶資料管理" data-icon="fa-receipt">客戶發票資料管理系統</li>
-                            <li data-desc="支票套印與歷史查詢" data-icon="fa-money-check">支票套印及保留過往資料查印系統</li>
-                            <li data-desc="薪資計算與人事紀錄" data-icon="fa-users">人事薪資管理系統</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="product-item">
-                    <button class="product-toggle">零售與餐飲觸控系統</button>
-                    <div class="product-menu">
-                        <ul>
-                            <li>餐飲觸控結帳系統</li>
-                            <li>蔬果超市過磅觸控結帳系統</li>
-                            <li>蔬果 / 五金百貨過磅條碼觸控快速結帳系統</li>
-                            <li>商品批發業觸控結帳系統（蔬果 / 鮮雞鴨魚肉）</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="product-item">
-                    <button class="product-toggle">專業地磅與過磅整合</button>
-                    <div class="product-menu">
-                        <ul>
-                            <li>卡車一二次過磅地磅單資料管理系統 (結合影像)</li>
-                            <li>二維條碼過磅觸控出入庫管理系統 (RS232 通訊)</li>
-                            <li>自訂標籤格式結合過磅值列印標籤系統</li>
-                            <li>報廢輪胎過磅記錄系統</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="product-item">
-                    <button class="product-toggle">工業製造與自動化控制</button>
-                    <div class="product-menu">
-                        <ul>
-                            <li>MRP 製造業進銷存（可整合 022）</li>
-                            <li>MRP 製造業進銷存（可整合 022GB）（簡體字版）</li>
-                            <li>拉壓力破壞機試驗管理系統（機械自動控制）</li>
-                            <li>摩擦材料係數檢測系統（機械自動控制）</li>
-                            <li>四軸點膠塗佈機教導式觸控操作系統（機械自動控制）</li>
-                            <li>四軸加工機教導式觸控操作系統（機械自動控制）</li>
-                            <li>紙箱堆疊控制觸控作業系統</li>
-                        </ul>
-                    </div>
-                </div>
+    <!-- 導航列 -->
+    <nav class="fixed top-0 w-full z-50 transition-all duration-500 pt-8 pb-4 mix-blend-difference" id="navbar">
+        <div class="max-w-[1440px] mx-auto px-6 md:px-12 flex justify-between items-center">
+            <div class="font-display font-bold text-2xl tracking-tighter hover-target flex items-center gap-2">
+                <iconify-icon icon="solar:command-bold" class="text-neon-purple"></iconify-icon>
+                HUNGLING
             </div>
-
+            <div class="hidden md:flex gap-10 text-xs font-mono tracking-widest text-gray-400 uppercase">
+                <a href="#cognition" class="hover-target hover:text-white transition-colors">Retail POS</a>
+                <a href="#quantum" class="hover-target hover:text-white transition-colors">Automation</a>
+                <a href="#synaptic" class="hover-target hover:text-white transition-colors">ERP Sync</a>
+            </div>
+            <button id="hero-contact-btn"
+                class="magnetic hover-target border border-white/20 rounded-full px-6 py-2.5 text-xs font-display font-semibold uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-300">
+                Get Quote
+            </button>
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="container">
-            <!-- 標題已移除以節省垂直空間 -->
+    <!-- 1. Hero 區塊 (逐字浮現動畫) -->
+    <section class="relative min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-[1440px] mx-auto z-10 pt-20">
+        <div
+            class="mb-6 font-mono text-xs text-neon-purple tracking-[0.3em] uppercase flex items-center gap-4 gs-reveal">
+            <span class="w-8 h-px bg-neon-purple"></span>
+            01 / 核心架構重塑
+        </div>
 
-            <!-- 三張並列圖片（pos.png、2.jpg、3.jpg），lazy loading 與簡易 srcset -->
-            <div class="hero-carousel" id="hero-carousel" role="region" aria-label="公司展示圖片">
-                <img src="img/pos.png" srcset="img/pos.png 800w, img/pos.png 400w" sizes="(max-width:480px) 100vw, 33vw"
-                    alt="圖片 1" class="carousel-item" loading="lazy">
-                <img src="img/2.jpg" srcset="img/2.jpg 800w, img/2.jpg 400w" sizes="(max-width:480px) 100vw, 33vw"
-                    alt="圖片 2" class="carousel-item" loading="lazy">
-                <img src="img/3.jpg" srcset="img/3.jpg 800w, img/3.jpg 400w" sizes="(max-width:480px) 100vw, 33vw"
-                    alt="圖片 3" class="carousel-item" loading="lazy">
-            </div>
+        <!-- 使用 font-display 營造未來感 -->
+        <h1
+            class="font-display font-bold text-6xl md:text-[8vw] leading-[0.9] tracking-tighter uppercase mb-10 w-full max-w-5xl">
+            <div class="text-reveal-wrap">Beyond</div>
+            <div
+                class="text-reveal-wrap text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-600">
+                Automation.</div>
+            <div class="text-reveal-wrap text-neon-purple">泓玲電腦</div>
+        </h1>
 
-            <div class="demo-box">
-                <!-- 介紹服務功能已移除 -->
+        <p class="max-w-xl text-gray-400 font-sans text-lg font-light leading-relaxed mb-16 gs-reveal">
+            打破實體與數位的邊界。我們專注於毫秒級觸控收銀、工業級地磅控制與無縫雲端 ERP 整合，為頂尖企業構建無堅不摧的數位大腦。
+        </p>
 
-                <hr>
-
-                <div class="systems-list">
-                    <div
-                        style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
-                        <h3 style="margin: 0;">公司系統一覽</h3>
-                        <div style="display: flex; gap: 8px;">
-                            <!-- 新增 Web POS 體驗按鈕 -->
-                            <a href="pos-app.html" target="_blank" class="nav-info-btn"
-                                style="background-color: #FF8C00; color: white; white-space: nowrap;"><i
-                                    class="fas fa-tablet-alt"></i> 線上體驗收銀機</a>
-                            <a href="https://twincn.com/item.aspx?no=85956954#google_vignette" target="_blank"
-                                class="nav-info-btn" style="white-space: nowrap;">公司核准設立資料</a>
-                            <button id="nav-contact-open" class="nav-contact-btn">聯絡我們</button>
-                        </div>
-                    </div>
-
-                    <div class="systems-search">
-                        <input id="systems-search" type="search" placeholder="搜尋系統或關鍵字...">
-                        <button id="clear-search" class="btn">清除</button>
-                    </div>
-
-                    <div class="system-group">
-                        <button class="group-toggle" aria-expanded="true">一、 核心商務與財務管理 (Business &amp; Finance)</button>
-                        <div class="group-content">
-                            <p class="group-note">這類系統專注於企業的帳務與基本買賣流程。</p>
-                            <ul>
-                                <li>會計總帳(繁體/簡體)</li>
-                                <li>MIS 買賣業進銷存（可整合 022）</li>
-                                <li>客戶發票資料管理系統</li>
-                                <li>支票套印及保留過往資料查印系統</li>
-                                <li>人事薪資管理系統</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="system-group">
-                        <button class="group-toggle" aria-expanded="true">二、 零售與餐飲觸控系統 (POS &amp; Retail)</button>
-                        <div class="group-content">
-                            <p class="group-note">針對門市、超市及餐廳設計的直覺式結帳方案。</p>
-                            <ul>
-                                <li data-desc="餐廳點餐與結帳" data-icon="fa-utensils">餐飲觸控結帳系統</li>
-                                <li data-desc="過磅結帳，適用蔬果" data-icon="fa-weight-scale">蔬果超市過磅觸控結帳系統</li>
-                                <li data-desc="過磅+條碼快速結帳" data-icon="fa-barcode">蔬果 / 五金百貨超市過磅條碼觸控快速結帳系統</li>
-                                <li data-desc="批發/市場專用收銀" data-icon="fa-store">商品批發業觸控結帳系統（蔬果 / 鮮雞鴨魚肉）</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="system-group">
-                        <button class="group-toggle" aria-expanded="true">三、 專業地磅與過磅整合 (Weighting &amp; Scales)</button>
-                        <div class="group-content">
-                            <p class="group-note">將硬體過磅數據與軟體管理系統結合。</p>
-                            <ul>
-                                <li data-desc="卡車過磅與影像記錄" data-icon="fa-truck">卡車一二次過磅地磅單資料管理系統 (結合影像)</li>
-                                <li data-desc="QR/條碼入出庫整合" data-icon="fa-qrcode">二維條碼過磅觸控出入庫管理系統 (RS232 通訊)</li>
-                                <li data-desc="標籤列印與格式自訂" data-icon="fa-print">自訂標籤格式結合過磅值列印標籤系統</li>
-                                <li data-desc="報廢輪胎過磅紀錄" data-icon="fa-truck-monster">報廢輪胎過磅記錄系統</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="system-group">
-                        <button class="group-toggle" aria-expanded="true">四、 工業製造與自動化控制 (Manufacturing &amp;
-                            Automation)</button>
-                        <div class="group-content">
-                            <p class="group-note">針對工廠端設計的進銷存及精密機械控制系統。</p>
-                            <ul>
-                                <li data-desc="製造業物料與生產排程" data-icon="fa-industry">MRP 製造業進銷存（可整合 022）</li>
-                                <li data-desc="簡體字製造系統" data-icon="fa-industry">MRP 製造業進銷存（可整合 022GB）（簡體字版）</li>
-                                <li data-desc="試驗機資料記錄與控制" data-icon="fa-clipboard-check">拉壓力破壞機試驗管理系統（機械自動控制）</li>
-                                <li data-desc="材料摩擦係數測試" data-icon="fa-sliders-h">摩擦材料係數檢測系統（機械自動控制）</li>
-                                <li data-desc="點膠塗佈教導式系統" data-icon="fa-microchip">四軸點膠塗佈機教導式觸控操作系統（機械自動控制）</li>
-                                <li data-desc="四軸加工機教導控制" data-icon="fa-microchip">四軸加工機教導式觸控操作系統（機械自動控制）</li>
-                                <li data-desc="紙箱堆疊與控制面板" data-icon="fa-box">紙箱堆疊控制觸控作業系統</li>
-                            </ul>
-                        </div>
-                    </div>
-
+        <div class="flex items-center gap-8 gs-reveal">
+            <!-- 磁吸按鈕 (Magnetic Pull) -->
+            <button
+                class="magnetic hover-target w-32 h-32 rounded-full bg-white text-dark flex items-center justify-center font-display font-bold text-sm uppercase tracking-widest hover:scale-95 transition-transform duration-300 relative group"
+                id="hero-engage-btn">
+                <span class="relative z-10">Engage</span>
+                <div
+                    class="absolute inset-0 rounded-full border border-white scale-110 opacity-0 group-hover:animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]">
                 </div>
-
-                <!-- 簡易預算計算功能已移除 -->
+            </button>
+            <div class="font-mono text-xs text-gray-500 tracking-widest uppercase flex flex-col gap-2">
+                <span>System Online</span>
+                <span class="text-white">Scroll to dive ↓</span>
             </div>
         </div>
     </section>
 
-    <footer class="footer">
-        <p>&copy; 泓玲電腦
-            負責人 張雅玲
-            <br>公司地址
-            <br>臺南市永康區安康里永大一路62之7號1樓
-        </p>
+    <!-- 2. 全球合作夥伴 (Iconify Simple Icons) -->
+    <section class="py-12 border-y border-white/5 bg-white/[0.01] relative z-10">
+        <div class="max-w-[1440px] mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
+            <p class="font-mono text-xs text-gray-500 tracking-[0.2em] uppercase">Powered by Global Nodes</p>
+            <div class="flex flex-wrap justify-center gap-10 md:gap-16 text-3xl md:text-4xl text-gray-600">
+                <iconify-icon icon="simple-icons:intel"
+                    class="hover-target hover:text-white transition-colors duration-300"></iconify-icon>
+                <iconify-icon icon="simple-icons:microsoft"
+                    class="hover-target hover:text-white transition-colors duration-300"></iconify-icon>
+                <iconify-icon icon="simple-icons:amazonwebservices"
+                    class="hover-target hover:text-white transition-colors duration-300"></iconify-icon>
+                <iconify-icon icon="simple-icons:stripe"
+                    class="hover-target hover:text-white transition-colors duration-300"></iconify-icon>
+                <iconify-icon icon="simple-icons:cisco"
+                    class="hover-target hover:text-white transition-colors duration-300"></iconify-icon>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 核心價值主張 (1px 邊框光束卡片) -->
+    <section class="py-32 px-6 md:px-12 max-w-[1440px] mx-auto relative z-10" id="cognition">
+        <div class="mb-20 md:mb-32 flex flex-col md:flex-row justify-between items-end gap-10">
+            <h2 class="font-display font-bold text-4xl md:text-6xl tracking-tighter leading-tight gs-fade-up">
+                極致流暢的<br>
+                <span class="text-gray-500">終端體驗.</span>
+            </h2>
+            <p class="max-w-sm text-gray-400 font-light leading-relaxed gs-fade-up">
+                從生鮮超市的過磅結帳，到重工業的拉壓力破壞機數據擷取，我們提供具備物理級穩定性的客製化系統。
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+            <!-- 價值主張 1 -->
+            <div class="glow-border group gs-fade-up hover-target" data-delay="0">
+                <div class="glow-border-inner p-10 md:p-12 flex flex-col justify-between h-full min-h-[400px]">
+                    <div>
+                        <div class="font-mono text-xs text-gray-500 mb-8 tracking-widest">01 / RETAIL POS</div>
+                        <iconify-icon icon="solar:cart-large-minimalistic-bold-duotone"
+                            class="text-5xl text-white mb-6 transform group-hover:scale-110 transition-transform duration-500"></iconify-icon>
+                        <h3 class="font-display font-bold text-2xl mb-4 text-white">零售與餐飲 POS</h3>
+                        <p class="text-gray-400 font-light text-sm leading-relaxed">
+                            直覺式觸控結帳，支援生鮮蔬果過磅與條碼掃描無縫切換，將結帳速度提升至極限，創造完美消費體驗。
+                        </p>
+                    </div>
+                    <div
+                        class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center text-xs font-mono text-neon-purple uppercase">
+                        <span>Explore Module</span>
+                        <iconify-icon icon="solar:arrow-right-up-linear" class="text-lg"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 價值主張 2 -->
+            <div class="glow-border group gs-fade-up hover-target" data-delay="0.2">
+                <div class="glow-border-inner p-10 md:p-12 flex flex-col justify-between h-full min-h-[400px]">
+                    <div>
+                        <div class="font-mono text-xs text-gray-500 mb-8 tracking-widest">02 / AUTOMATION</div>
+                        <iconify-icon icon="solar:cpu-bold-duotone"
+                            class="text-5xl text-white mb-6 transform group-hover:scale-110 transition-transform duration-500"></iconify-icon>
+                        <h3 class="font-display font-bold text-2xl mb-4 text-white">工業製造自動化</h3>
+                        <p class="text-gray-400 font-light text-sm leading-relaxed">
+                            結合影像與 RS232 通訊，卡車過磅數據與自動擷取，大幅減少人工作業失誤並防堵舞弊行為。
+                        </p>
+                    </div>
+                    <div
+                        class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center text-xs font-mono text-neon-blue uppercase">
+                        <span>Explore Module</span>
+                        <iconify-icon icon="solar:arrow-right-up-linear" class="text-lg"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 價值主張 3 -->
+            <div class="glow-border group gs-fade-up hover-target" data-delay="0.4">
+                <div class="glow-border-inner p-10 md:p-12 flex flex-col justify-between h-full min-h-[400px]">
+                    <div>
+                        <div class="font-mono text-xs text-gray-500 mb-8 tracking-widest">03 / CLOUD ERP</div>
+                        <iconify-icon icon="solar:network-bold-duotone"
+                            class="text-5xl text-white mb-6 transform group-hover:scale-110 transition-transform duration-500"></iconify-icon>
+                        <h3 class="font-display font-bold text-2xl mb-4 text-white">全生態資料串聯</h3>
+                        <p class="text-gray-400 font-light text-sm leading-relaxed">
+                            打破內部資訊孤島。無縫對齊進銷存軟體與前端終端設備，將龐大數據流轉化為零延遲的決策洞察。
+                        </p>
+                    </div>
+                    <div
+                        class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center text-xs font-mono text-neon-cyan uppercase">
+                        <span>Explore Module</span>
+                        <iconify-icon icon="solar:arrow-right-up-linear" class="text-lg"></iconify-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 視覺震撼區塊 (真實高清圖像 + 視差) -->
+    <section class="py-20 relative z-10 w-full overflow-hidden h-[80vh] min-h-[600px] flex items-center justify-center">
+        <!-- Parallax Background Image -->
+        <div class="absolute inset-0 w-full h-[120%] -top-[10%] parallax-img hover-target">
+            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2000&q=80"
+                alt="Industrial Automation"
+                class="w-full h-full object-cover opacity-30 mix-blend-luminosity grayscale">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-dark"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-6 mix-blend-difference pointer-events-none">
+            <h2
+                class="font-display font-bold text-5xl md:text-[8vw] uppercase tracking-tighter leading-none text-white">
+                Automation<br>Redefined.
+            </h2>
+        </div>
+    </section>
+
+    <!-- 5. Footer (磁吸 CTA 與品牌結尾) -->
+    <footer class="py-32 px-6 md:px-12 max-w-[1440px] mx-auto relative z-10">
+        <div class="flex flex-col items-center text-center mb-32">
+            <div class="font-mono text-xs text-gray-500 tracking-[0.3em] uppercase mb-8 gs-fade-up">Ready to Upgrade?
+            </div>
+            <h2 class="font-display font-bold text-5xl md:text-7xl tracking-tighter mb-16 gs-fade-up">
+                啟動您的<br>數位引擎。
+            </h2>
+
+            <button id="open-line"
+                class="magnetic hover-target w-48 h-48 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm flex items-center justify-center font-display font-bold text-[15px] uppercase tracking-widest hover:bg-white hover:text-black hover:border-white transition-all duration-500 gs-fade-up cursor-pointer text-center leading-loose">
+                Contact<br>HungLing
+            </button>
+        </div>
+
+        <div
+            class="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6 font-mono text-xs text-gray-600 uppercase tracking-widest">
+            <div>
+                <span class="text-white mr-4">HungLing Tech © 2026</span>
+                <span>System version 4.0.2</span>
+            </div>
+            <div class="flex gap-8">
+                <a href="https://line.me/R/ti/p/%40747uykhu" target="_blank"
+                    class="hover-target hover:text-white transition-colors">Line Support</a>
+                <a href="#" class="hover-target hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover-target hover:text-white transition-colors">System Status</a>
+            </div>
+        </div>
     </footer>
 
-    <!-- 聯絡我們浮動按鈕 -->
-    <div class="contact-fab" id="contact-fab" aria-hidden="false">
-        <button id="contact-open" class="fab-btn" aria-label="聯絡我們">
-            <i class="fab fa-line"></i>
-        </button>
-        <div class="contact-panel" id="contact-panel" aria-hidden="true">
-            <button id="contact-close" class="panel-close" aria-label="關閉">✕</button>
-            <h4>聯絡我們</h4>
-            <p>透過 LINE 與我們對話</p>
-            <div class="contact-actions">
-                <button id="open-line" class="btn btn-primary">用 LINE 聊聊</button>
+    <!-- LINE 懸浮聯絡按鈕 (Floating Action Button & QR Panel) -->
+    <div class="fixed bottom-6 right-6 z-[100] group flex flex-col items-end">
+        <!-- 展開的 QR Code 與聯絡面板 (懸停時顯示) -->
+        <div
+            class="glass-panel mb-4 p-6 rounded-2xl w-auto opacity-0 pointer-events-none translate-y-4 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-400 transform origin-bottom border border-[#00B900]/30 shadow-[0_0_30px_rgba(0,185,0,0.15)] flex flex-col items-center cursor-default">
+            <h4 class="font-bold text-white mb-2 flex items-center gap-2 whitespace-nowrap">
+                <iconify-icon icon="simple-icons:line" class="text-[#00B900]"></iconify-icon> 泓玲 LINE 客服
+            </h4>
+            <p class="text-xs text-gray-400 mb-4 text-center whitespace-nowrap">掃描 QR Code 或點擊下方按鈕加入</p>
+
+            <div class="bg-white p-2 rounded-xl mb-4">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://line.me/R/ti/p/%40747uykhu&color=050507&bgcolor=ffffff"
+                    alt="LINE QR Code" class="w-28 h-28 object-contain">
             </div>
-            <p class="note-small">請登入會員並加入好友，<br>收到訊息後將儘速回覆</p>
+
+            <a href="https://line.me/R/ti/p/%40747uykhu" target="_blank" id="open-line-hover"
+                class="w-full text-center py-2.5 rounded-lg bg-[#00B900] text-white font-bold text-sm tracking-widest hover:bg-[#009b00] transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer">
+                手機點此加入
+            </a>
         </div>
+
+        <!-- 觸發按鈕 本體 -->
+        <a id="open-line-hover-icon"
+            class="w-14 h-14 rounded-full bg-[#00B900] text-white flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(0,185,0,0.4)] hover:scale-110 hover:shadow-[0_0_30px_rgba(0,185,0,0.6)] transition-all duration-300 magnetic hover-target cursor-pointer">
+            <iconify-icon icon="simple-icons:line"></iconify-icon>
+        </a>
+    </div>
+
+    <!-- 聯絡我們浮動按鈕 (保留原本 main.js 內部引用所需之元素避免報錯) -->
+    <div id="contact-fab" style="display: none;" aria-hidden="true">
+        <button id="contact-open"></button>
     </div>
 
     <script src="js/main.js" defer></script>
 
-    <!-- Plausible consent banner (hidden by default) -->
-    <div id="analytics-consent"
-        style="position:fixed;left:12px;right:12px;bottom:12px;z-index:200;display:none;background:#fff;padding:12px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-            <div>
-                <strong>允許匿名網站分析？</strong>
-                <div style="color:#64748b;font-size:0.95rem;">我們使用隱私友善的分析以改善使用體驗，不會蒐集個人資料。</div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center;">
-                <button id="analytics-decline" class="btn">拒絕</button>
-                <button id="analytics-accept" class="btn btn-primary">允許</button>
-            </div>
-        </div>
-    </div>
+    <!-- Scripts -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
 
+        // 1. 文字逐字浮現動畫 (Text Reveal) Function
+        function wrapCharacters(element) {
+            const text = element.innerText;
+            element.innerText = '';
+            // 處理每個字元，包含空白
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.className = 'split-char';
+                const innerSpan = document.createElement('span');
+                innerSpan.innerHTML = char === ' ' ? '&nbsp;' : char;
+                span.appendChild(innerSpan);
+                element.appendChild(span);
+            });
+        }
+
+        // 初始化標題逐字動畫
+        const revealWraps = document.querySelectorAll('.text-reveal-wrap');
+        revealWraps.forEach(wrap => wrapCharacters(wrap));
+
+        gsap.to('.split-char span', {
+            y: '0%',
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.03,
+            ease: 'power4.out',
+            delay: 0.2
+        });
+
+        // 通用向上淡入動畫
+        gsap.from('.gs-reveal', {
+            y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: 'power3.out', delay: 1
+        });
+
+        // 滾動觸發動畫
+        gsap.utils.toArray('.gs-fade-up').forEach(element => {
+            gsap.from(element, {
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                },
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: parseFloat(element.dataset.delay || 0)
+            });
+        });
+
+        // 影像視差效果 (Parallax)
+        gsap.to('.parallax-img', {
+            yPercent: 20,
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".parallax-img",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+
+        // 2. 自訂滑鼠游標 (Mix-blend-mode: difference)
+        const cursor = document.getElementById('cursor');
+        const hoverTargets = document.querySelectorAll('.hover-target');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = mouseX;
+        let cursorY = mouseY;
+
+        // 監聽滑鼠移動
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // 平滑跟隨動畫 loop
+        function animateCursor() {
+            let dx = mouseX - cursorX;
+            let dy = mouseY - cursorY;
+            cursorX += dx * 0.15; // 調整 0.15 改變跟隨速度的黏滯感
+            cursorY += dy * 0.15;
+            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover 放大狀態
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            target.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // 3. 按鈕磁吸效果 (Magnetic Pull)
+        const magneticElements = document.querySelectorAll('.magnetic');
+        magneticElements.forEach(elem => {
+            elem.addEventListener('mousemove', function (e) {
+                const rect = elem.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                // 觸發 GSAP 讓元素移向滑鼠位置
+                gsap.to(elem, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            });
+
+            elem.addEventListener('mouseleave', function () {
+                // 滑鼠離開時彈回原位
+                gsap.to(elem, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "elastic.out(1, 0.3)"
+                });
+            });
+        });
+
+        // 4. LINE App 連動跳轉 (統合觸發)
+        const triggerLineApp = (e) => {
+            e.preventDefault();
+            // 呼叫舊版 js/main.js 內已綁定的跳轉事件 (若有的話)
+            const fabLink = 'line://ti/p/@747uykhu';
+            const webLink = 'https://line.me/R/ti/p/@747uykhu';
+
+            // 強制 deep link 優先
+            window.location.href = fabLink;
+            setTimeout(() => {
+                window.location.href = webLink;
+            }, 1500);
+        };
+
+        const heroContactBtn = document.getElementById('hero-contact-btn');
+        const heroEngageBtn = document.getElementById('hero-engage-btn');
+        const openLineBtn = document.getElementById('open-line');
+        const openLineHover = document.getElementById('open-line-hover');
+        const openLineHoverIcon = document.getElementById('open-line-hover-icon');
+
+        [heroContactBtn, heroEngageBtn, openLineBtn, openLineHover, openLineHoverIcon].forEach(btn => {
+            if (btn) btn.addEventListener('click', triggerLineApp);
+        });
+    </script>
 </body>
 
 </html>
