@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // decorate list items with icon and small description (generic)
     const listItems = document.querySelectorAll('.system-group .group-content ul li');
     listItems.forEach(li => {
+        li.classList.add('category-card'); // 加入高級感卡片樣式
         // avoid double-inject
         if (li.querySelector('.card-icon')) return;
         const icon = document.createElement('i');
@@ -75,6 +76,28 @@ document.addEventListener('DOMContentLoaded', function () {
         li.textContent = ''; // clear existing
         li.appendChild(icon); li.appendChild(body);
     });
+    // 滾動淡入動畫
+    const revealElements = document.querySelectorAll('.reveal');
+    if (revealElements.length > 0 && window.IntersectionObserver) {
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const revealOnScroll = new IntersectionObserver(function (entries, observer) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+        revealElements.forEach(el => {
+            revealOnScroll.observe(el);
+        });
+    } else {
+        // Fallback for no IntersectionObserver support
+        revealElements.forEach(el => el.classList.add('active'));
+    }
 });
 
 // 4. Navbar 產品資訊下拉行為（單一開啟，點擊外側關閉）
