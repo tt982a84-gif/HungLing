@@ -203,26 +203,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * 結帳作業
+     * 結帳作業 (LINE Pay)
      */
-    function checkout() {
+    async function checkout() {
         const total = cart.reduce((sum, item) => sum + item.final_price, 0);
-        const change = receivedAmount - total;
 
-        // 呼叫 PosData 處理扣庫存與交易紀錄
-        PosData.processCheckout(cart, total);
+        if (total === 0) {
+            alert("購物車是空的！");
+            return;
+        }
 
-        // 顯示結帳 Modal
-        checkoutTotal.textContent = `應收： $ ${total.toLocaleString()}`;
-        checkoutReceived.textContent = `實收： $ ${receivedAmount.toLocaleString()}`;
-        checkoutChange.textContent = `$ ${change.toLocaleString()}`;
-        modalCheckout.classList.add('active');
+        // 轉換購物車格式符合 LINE Pay Packages 需求
+        const packages = [
+            {
+                id: `PKG_${Date.now()}`,
+                amount: total,
+                name: "張媽媽滷味 POS 訂單",
+                products: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    quantity: item.qty,
+                    price: item.price
+                }))
+            }
+        ];
 
-        // 清空購物車與輸入
-        cart = [];
-        clearInput();
-        loadAndRenderProducts(); // 因為庫存扣了，重繪
-        refreshDisplay();
+        try {
+            // 按鈕顯示處理中
+            btnCheckout.disabled = true;
+            btnCheckout.textContent = "導向 LINE Pay...";
+
+            // 呼叫我們的本地後端伺服器 (server.js)
+            const response = await fetch('/api/linepay/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: total,
+                    currency: 'TWD',
+                    orderId: `ORDER_${Date.now()}`,
+                    packages: packages
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.returnCode === "0000" && data.info && data.info.paymentUrl) {
+                // 將訂單資訊與要扣除的庫存存入 LocalStorage 供 confirm 成功後使用
+                localStorage.setItem('pending_linepay_order', JSON.stringify({
+                    cart: cart,
+                    total: total,
+                }));
+
+                // 導向 LINE Pay 付款頁面
+                window.location.href = data.info.paymentUrl.web;
+            } else {
+                alert(`LINE Pay 請求失敗: ${data.returnMessage}`);
+                btnCheckout.disabled = false;
+                btnCheckout.textContent = "結帳 (Checkout)";
+            }
+
+        } catch (error) {
+            console.error("LINE Pay API Error:", error);
+            alert("系統錯誤，無法連接後端伺服器！請確認 server.js 是否已啟動。");
+            btnCheckout.disabled = false;
+            btnCheckout.textContent = "結帳 (Checkout)";
+        }
     }
 
 

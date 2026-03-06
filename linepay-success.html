@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE Pay 付款處理中 - 泓玲電腦</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #050507;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+        }
+
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #00C300;
+            /* LINE Green */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #00C300;
+        }
+
+        p {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .btn-home {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-home:hover {
+            background: #555;
+        }
+
+        #error-block {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="loading-block">
+            <div class="loader"></div>
+            <h2>正在確認付款，請稍候...</h2>
+            <p>請勿關閉或重新整理此頁面。</p>
+        </div>
+
+        <div id="error-block">
+            <i class="fas fa-times-circle" style="font-size: 40px; color: #ff4d4f; margin-bottom: 15px;"></i>
+            <h2 style="color: #ff4d4f;">付款失敗或已取消</h2>
+            <p id="error-msg">無法驗證您的 LINE Pay 付款。</p>
+            <a href="pos-app.html" class="btn-home">返回 POS 系統</a>
+        </div>
+    </div>
+
+    <!-- 載入 pos-data.js 以便在此處扣除庫存並寫入交易紀錄 -->
+    <script src="js/pos-data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loadingBlock = document.getElementById('loading-block');
+            const errorBlock = document.getElementById('error-block');
+            const errorMsg = document.getElementById('error-msg');
+
+            // 1. 從 URL 取得 transactionId 及 orderId (LINE Pay 回傳的參數)
+            const urlParams = new URLSearchParams(window.location.search);
+            const transactionId = urlParams.get('transactionId');
+            const orderId = urlParams.get('orderId');
+
+            if (!transactionId) {
+                loadingBlock.style.display = 'none';
+                errorBlock.style.display = 'block';
+                return;
+            }
+
+            // 2. 從 LocalStorage 取得剛剛送出前暫存的訂單明細與總金額
+            const pendingOrderStr = localStorage.getItem('pending_linepay_order');
+            if (!pendingOrderStr) {
+                loadingBlock.style.display = 'none';
+                errorBlock.style.display = 'block';
+                errorMsg.textContent = "找不到暫存的訂單資料。";
+                return;
+            }
+
+            const pendingOrder = JSON.parse(pendingOrderStr);
+
+            try {
+                // 3. 呼叫後端 API 進行 Confirm (最後確認並扣款)
+                const response = await fetch('/api/linepay/confirm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        transactionId: transactionId,
+                        amount: pendingOrder.total,
+                        currency: 'TWD'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.returnCode === "0000") {
+                    // 4. 付款成功！呼叫 PosData 處理扣庫存與交易紀錄
+                    PosData.processCheckout(pendingOrder.cart, pendingOrder.total);
+
+                    // 清除暫存
+                    localStorage.removeItem('pending_linepay_order');
+
+                    // 5. 導向一個簡單的成功畫面，或直接彈出訊息跳回 POS 系統
+                    loadingBlock.innerHTML = `
+                        <i class="fas fa-check-circle" style="font-size: 40px; color: #00C300; margin-bottom: 15px;"></i>
+                        <h2 style="color: #00C300;">付款成功！</h2>
+                        <p>您的訂單已完成付款，系統將在 3 秒後自動返回收銀畫面。</p>
+                    `;
+
+                    setTimeout(() => {
+                        window.location.href = 'pos-app.html';
+                    }, 3000);
+
+                } else {
+                    throw new Error(data.returnMessage || "LINE Pay Confirm API 拒絕了這筆交易");
+                }
+
+            } catch (error) {
+                console.error("LINE Pay Confirm Error:", error);
+                loadingBlock.style.display = 'none';
+                errorBlock.style.display = 'block';
+                errorMsg.textContent = error.message;
+                localStorage.removeItem('pending_linepay_order');
+            }
+        });
+    </script>
+</body>
+
+</html>

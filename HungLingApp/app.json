@@ -1,0 +1,14 @@
+{
+    "expo": {
+        "name": "泓玲電腦",
+        "slug": "hungling-app",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "sdkVersion": "54.0.0",
+        "platforms": [
+            "ios",
+            "android"
+        ],
+        "newArchEnabled": false
+    }
+}
